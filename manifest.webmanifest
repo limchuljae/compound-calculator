@@ -1,17 +1,15 @@
 {
-  "name": "복리 계산기",
+  "name": "복리(환율)계산기",
   "short_name": "복리계산기",
-  "start_url": "./index.html",
+  "description": "복리·환율·일반 계산기",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
+  "lang": "ko-KR",
+  "orientation": "portrait",
   "icons": [
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
   ]
 }
