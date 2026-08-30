@@ -401,6 +401,16 @@
   .app.page2{transform-origin:top center!important;transform:scaleY(1.08)!important;}
 }
 </style>
+
+<style id="s2-37-page1-normal-restore">
+/* S2-37: 1번 페이지의 정상 크기를 복원하면서 이전값 버튼은 한 화면 안에 유지. 2번·3번은 변경하지 않음. */
+@media (max-width:420px) and (max-height:820px){
+  .app:not(.page2) h1{margin-bottom:4px!important;}
+  .app:not(.page2) label{margin-top:6px!important;margin-bottom:3px!important;}
+  .app:not(.page2) .results{margin-top:3px!important;padding-top:6px!important;padding-bottom:6px!important;}
+  .app:not(.page2) .row{min-height:46px!important;padding-top:6px!important;padding-bottom:6px!important;}
+}
+</style>
 </head><body><main class="app" id="app" data-creator-mark=""><button id="calcEntry" class="calc-entry" type="button" aria-label="일반 계산기" title="일반 계산기"><span class="calc-glyph" aria-hidden="true"></span></button><button id="themeToggle" class="theme-toggle" type="button" aria-label="2번 페이지로 전환">🦋</button><h1>복리(환율)계산기</h1><label>금액 입력</label><div class="moneyline"><select id="currency" aria-label="통화 선택"><option value="₩">🇰🇷 ₩ (한국)</option><option value="$">🇺🇸 $ (미국)</option><option value="USDT">USDT</option><option value="CNY">🇨🇳 CNY (중국)</option><option value="VND">🇻🇳 VND (베트남)</option><option value="THB">🇹🇭 THB (태국)</option><option value="KHR">🇰🇭 KHR (캄보디아)</option></select><input class="main" id="amount" type="text" inputmode="decimal" value="1,000" aria-label="금액"><div class="converted" id="amountConverted"></div></div><label>1회 수익률 입력 (%)</label><div class="editwrap"><input class="main" id="rate" type="number" inputmode="decimal" value="0"><span class="suffix">%</span></div><section class="results"><div class="row"><span class="k" id="mainLabel">값</span><span class="v" id="value">₩ 1,000</span></div><div class="row"><span class="k" id="convertedLabel">$ 환산값</span><span class="v subvalue" id="valueConverted">-</span></div><div class="row"><span class="k" id="thirdLabel">USDT 환산값</span><span class="v subvalue" id="thirdConverted">-</span></div><div class="row"><span class="k">누적수익률</span><div class="editwrap"><input id="cum" class="edit" type="number" inputmode="decimal" value="0"><span class="suffix">%</span></div></div><div class="row"><span class="k">계산 횟수</span><div class="editwrap"><input id="count" class="edit count" type="number" inputmode="decimal" value="0" min="0"><span class="suffix">회</span></div></div></section><div class="decor2" aria-hidden="true"></div><div class="fxstatus" id="fxStatus">환율 확인 중…</div><div class="buttons"><button class="run" id="run">실행</button><button class="reset" id="reset">초기화</button></div><button class="auto" id="auto">자동실행 OFF</button><button class="prev" id="prev">이전값</button></main>
 <section id="calculatorPage" aria-hidden="true">
   <div class="calc3-shell">
