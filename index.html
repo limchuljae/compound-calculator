@@ -562,18 +562,31 @@ $id('prev').onclick=()=>{last='count';N.value=Math.max(0,(Number(N.value)||0)-1)
 AUTO.onclick=()=>{if(timer){stop();return}AUTO.textContent='자동실행 ON';AUTO.classList.add('on');timer=setInterval(()=>{last='count';N.value=(Number(N.value)||0)+1;fromN()},1000)};
 A.addEventListener('input',()=>{formatAmountInput();calc()}); R.addEventListener('input',calc); N.addEventListener('input',()=>{last='count';fromN()}); C.addEventListener('input',()=>{last='cum';fromC()}); CUR.addEventListener('change',()=>{applyCreatorMark();calc();showFxStatus()});
 
-const STORE_VER='v35';
-const LEGACY_STORE_VERS=['v34','v33','v31','v30'];
+const STORE_VER='v36';
+const LEGACY_STORE_VERS=['v35','v34','v33','v31','v30'];
+// 네이버는 VND/KHR를 100단위 기준으로 제공하는 경우가 있습니다.
+// 앱 내부에서는 모든 환율을 항상 '해당 통화 1단위 = KRW'로 저장/계산합니다.
+function normalizeKrwRate(code,raw){
+  let rate=Number(raw);
+  if(!Number.isFinite(rate)||rate<=0)return 0;
+  // VND: 정상 1동 환율은 약 0.05원대. 100동 기준(약 5원대)이면 1/100로 변환.
+  if(code==='VND'&&rate>0.5)rate/=100;
+  // KHR: 정상 1리엘 환율은 약 0.3원대. 100리엘 기준(약 30원대)이면 1/100로 변환.
+  if(code==='KHR'&&rate>2)rate/=100;
+  return rate;
+}
 function loadSaved(code){
   try{
     const versions=[STORE_VER,...LEGACY_STORE_VERS];
     for(const ver of versions){
-      const r=Number(localStorage.getItem('fx_'+code+'_rate_'+ver));
+      const raw=Number(localStorage.getItem('fx_'+code+'_rate_'+ver));
+      const r=normalizeKrwRate(code,raw);
       const t=localStorage.getItem('fx_'+code+'_time_'+ver);
       const slot=localStorage.getItem('fx_'+code+'_slot_'+ver);
       if(Number.isFinite(r)&&r>0){
         fx[code].rate=r;fx[code].time=t||'';fx[code].slot=slot||'';fx[code].live=false;
-        if(ver!==STORE_VER)save(code);
+        // 이전 버전에 저장된 VND/KHR 100단위 값도 새 버전 저장소에 1단위 값으로 즉시 교정합니다.
+        if(ver!==STORE_VER||r!==raw)save(code);
         return true;
       }
     }
@@ -618,10 +631,8 @@ async function refreshNaver(code){
   try{
     const data=await fetchJsonWithFallback(url),info=data?.exchangeInfo||data;
     let rate=Number(String(info?.calcPrice??info?.closePrice??'').replace(/,/g,''));
+    rate=normalizeKrwRate(code,rate);
     if(!Number.isFinite(rate)||rate<=0)throw new Error('bad rate');
-    // 네이버 VND/KHR가 100단위로 내려오는 경우에만 1단위 KRW로 정규화
-    const unitText=String(info?.unit??'');
-    if((code==='VND'||code==='KHR') && rate>1 && (unitText.includes('100') || !info?.calcPrice)) rate/=100;
     fx[code].rate=rate;fx[code].time=kstNow();fx[code].slot=currentKstSlot();fx[code].source='네이버';fx[code].live=true;save(code);
     updateConverted();showFxStatus();
     return true;
